@@ -36,18 +36,17 @@ class HistogramCompressor:
             upd_idx = self.hist.index.tolist()
             upd_idx[0] = value
             self.hist.index = upd_idx
-#            self.hist.iloc[0] += 1
+
         elif value > self.hist.index[-1]:
             upd_idx = self.hist.index.tolist()
             upd_idx[-1] = value
             self.hist.index = upd_idx
-#            self.hist.iloc[-1] += 1
-#        else:
+
         greater_mask = self.hist.index >= value
         upper_margin = self.hist.loc[greater_mask].index[0]
         self.hist[upper_margin] += 1
         
-    def update_batches(self, values):
+    def batch_update(self, values):
         #TODO performance test for
         #pd.Series(a).groupby(pd.cut(a, bins=hist.index)).count()
         #instead loop
