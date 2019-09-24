@@ -1,17 +1,25 @@
+import numpy as np
+import pandas as pd
+from tdigest import TDigest
+from histcomp import HistogramCompressor
+
 class IQRClassifier:
-    def __init__(self, n_iqr=2, window='10d'):
-        '''
-        Classifier of outliers in series by interquantile range.
+    '''Interquantile range classifier'''
+    def __init__(self, n_iqr=2, window='10d', method='histcomp'):
+        #TODO rolling
+        '''Classifier of outliers in series by interquantile range.
         
         Parameters
         ---------
         n_iqr: float
-        #TODO rolling
-        window: str 
+        window: str
+        method: str
+        'histcomp' or 'tdigest' algorithm for streaming quantiles
         
         '''
         self.n_iqr = n_iqr
         self.window = window
+        self.method = method
     
     def fit_predict(self, df, warm_start=False):
         '''
@@ -32,14 +40,11 @@ class IQRClassifier:
             if not hasattr(self, 'median'):
                 raise AttributeError('warm start before initial fit')
             
-            #TODO performance test for
-            #pd.Series(a).groupby(pd.cut(a, bins=hist.index)).count()
-            #instead loop
-            for v in df.values:
-                self.__update__(v)
+            self.__update__(df)
             
         else:
             self.__fit__(df)
+                
             
         outlier_mask=self.predict(df)
         return outlier_mask
@@ -50,36 +55,30 @@ class IQRClassifier:
         '''
         self.median = df.median()
         self.iqr = df.quantile(0.75) - df.quantile(0.25)
-        #TODO only existing values in bins
-        hist = np.histogram(df, bins=1000)
-        self.hist = pd.Series(hist[0], index=hist[1][1:])
+        
+        if self.method == 'histcomp':
+            self.compressor=HistogramCompressor()
+            self.compressor.fit(df)
+            
+        elif self.method == 'tdigest':
+            self.compressor=TDigest()
+            self.compressor.batch_update(df)
 
-    def __update__(self, value):
+    def __update__(self, values):
         '''
         Update clasifier with new value in df.
         '''
-        if value < self.hist.index[0]:
-            self.hist.index.values[0] = value
-            self.hist.iloc[0] += 1
-        elif value > self.hist.index[-1]:
-            self.hist.index.values[-1] = value
-            self.hist.iloc[-1] += 1
-        else:
-            greater_mask = self.hist.index >= value
-            upper_margin = self.hist[greater_mask].index[0]
-            self.hist[upper_margin] += 1
+        
+        self.compressor.batch_update(values)
+        
+        if self.method == 'histcomp':
+            self.median = self.compressor.quantile(0.5)
+            self.iqr = self.compressor.quantile(0.75) - self.compressor.quantile(0.25)
             
-        self.median = self.__hist_quantile__(self.hist, 0.5)
-        self.iqr = self.__hist_quantile__(self.hist, 0.75) - self.__hist_quantile__(self.hist, 0.25)
+        elif self.method == 'tdigest':
+            self.median = self.compressor.percentile(50)
+            self.iqr = self.compressor.percentile(75) - self.compressor.percentile(25)
             
-    def __hist_quantile__(self, hist, q):
-        '''
-        Calculate quantile from histogram
-        '''
-        cdf = hist.cumsum() / hist.sum()
-        quantile = cdf[cdf < q].index[-1]
-        return quantile
-
     def predict(self, df):
         '''
         Returns outlier mask without update classifier
