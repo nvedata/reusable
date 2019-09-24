@@ -59,13 +59,11 @@ class IQRClassifier:
         Update clasifier with new value in df.
         '''
         if value < self.hist.index[0]:
-            #TODO handle hist overgrown
-            self.hist.loc[value] = 1
-            self.hist.sort_index(inplace=True)
-            print('less')
+            self.hist.index.values[0] = value
+            self.hist.iloc[0] += 1
         elif value > self.hist.index[-1]:
-            self.hist.loc[value] = 1
-            self.hist.sort_index(inplace=True)
+            self.hist.index.values[-1] = value
+            self.hist.iloc[-1] += 1
         else:
             greater_mask = self.hist.index >= value
             upper_margin = self.hist[greater_mask].index[0]
