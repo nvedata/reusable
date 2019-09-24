@@ -3,6 +3,7 @@ import pandas as pd
 
 class HistogramCompressor:
     def __init__(self, bins=1000):
+    #TODO only existing values in bins
         '''
         Compress values of series in histogram.
         
@@ -32,19 +33,24 @@ class HistogramCompressor:
             raise AttributeError('update before initial fit')
         
         if value < self.hist.index[0]:
-            self.hist.index.values[0] = value
-            self.hist.iloc[0] += 1
+            upd_idx = self.hist.index.tolist()
+            upd_idx[0] = value
+            self.hist.index = upd_idx
+#            self.hist.iloc[0] += 1
         elif value > self.hist.index[-1]:
-            self.hist.index.values[-1] = value
-            self.hist.iloc[-1] += 1
-        else:
-            greater_mask = self.hist.index >= value
-            upper_margin = self.hist[greater_mask].index[0]
-            self.hist[upper_margin] += 1
+            upd_idx = self.hist.index.tolist()
+            upd_idx[-1] = value
+            self.hist.index = upd_idx
+#            self.hist.iloc[-1] += 1
+#        else:
+        greater_mask = self.hist.index >= value
+        upper_margin = self.hist.loc[greater_mask].index[0]
+        self.hist[upper_margin] += 1
         
     def update_batches(self, values):
         #TODO performance test for
         #pd.Series(a).groupby(pd.cut(a, bins=hist.index)).count()
+        #instead loop
         '''
         Update histogram with series of new values.
         values: pd.Series of numeric
