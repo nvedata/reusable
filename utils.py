@@ -51,6 +51,7 @@ def time_derivative(series, time_unit=pd.Timedelta('1s')):
     return dsdt
 
 def isnumber(a):
+    '''Check if string can be converted fo float'''
     try:
         float(a)
         return True
@@ -58,7 +59,7 @@ def isnumber(a):
         return False
     
 def convert_cyr_month(series):
-    '''
+    '''Convert cyrillic name of month in series to month number (i.e. 01, 02, ..., 12)
     Parameters
     ----------
     series: pd.Series of str
@@ -88,3 +89,25 @@ def convert_cyr_month(series):
         series=series.str.replace(k, v)
     
     return series
+
+def read_all_sheets(add_sheet_name=True, **kwargs):
+    '''Read all sheets from Excel file
+    Parameters
+    ----------
+    add_sheet_name: bool
+    Add to dataframe column with sheet name for each sheet
+    pd.ExcelFile **kwargs
+    
+    Returns
+    ----------
+    sheets: list of pd.DataFrame
+    '''
+    book=pd.ExcelFile(**kwargs)
+    
+    sheets=[]
+    for sh in book.sheet_names:
+        sheet=book.parse(sh)
+        sheet['sheet_name']=sh
+        sheets.append(sheet)
+
+    return sheets
