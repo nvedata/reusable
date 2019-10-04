@@ -5,23 +5,21 @@ from histcomp import HistogramCompressor
 
 class IQRClassifier:
     '''Interquantile range classifier'''
-    def __init__(self, n_iqr=2, window='10d', method='histcomp'):
-        #TODO rolling
+    def __init__(self, n_iqr=2, method='histcomp'):
         '''Classifier of outliers in series by interquantile range.
         
         Parameters
         ---------
         n_iqr: float
-        window: str
         method: str
         'histcomp' or 'tdigest' algorithm for streaming quantiles
         
         '''
         self.n_iqr = n_iqr
-        self.window = window
         self.method = method
     
     def fit_predict(self, df, warm_start=False):
+        #TODO df ->  x
         '''
         Fit classifier and returns outlier mask.
         
@@ -94,3 +92,43 @@ class IQRClassifier:
         outlier_mask = df > (self.median + self.n_iqr * self.iqr)
         outlier_mask |= df < (self.median - self.n_iqr * self.iqr)
         return outlier_mask
+
+def iqr_outlier_mask(df, median, iqr, n_iqr):
+        '''
+        Returns outlier mask.
+        
+        Parameters
+        ---------
+        df: pd.Series of numeric
+        median : numeric
+        iqr: numeric
+        n_iqr: numeric
+        
+        Returns
+        ---------
+        outlier_mask: pd.Series with same index as df of bool
+        '''
+        
+        outlier_mask = df > (median + n_iqr * iqr)
+        outlier_mask |= df < (median - n_iqr * iqr)
+        return outlier_mask
+    
+def plot_outliers(series, outlier_mask, **kwargs):
+    
+    '''
+    Draws outliers plot of timeseries.
+    
+    Parameters
+    ----------
+    series: pd.Series of float with pd.DatetimeIndex
+    outlier_mask: pd.Series of bool with same index as series
+    **kwargs argument of pd.Series.plot()
+    
+    Returns
+    ---------
+    None
+    
+    '''
+    series[~outlier_mask].reindex(index=series.index).plot(**kwargs)
+    series[outlier_mask].reindex(index=series.index).plot(**kwargs)
+    plt.show()
