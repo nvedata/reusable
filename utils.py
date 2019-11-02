@@ -111,3 +111,23 @@ def read_all_sheets(add_sheet_name=True, **kwargs):
         sheets.append(sheet)
 
     return sheets
+
+def timeseries_info(df):
+    
+    '''Timeseries start, end and frequency.
+    
+    Parameters
+    ----------
+    df: pd.DataFrame or pd.Series with pd.DatetimeIndex
+    
+    Returns
+    ----------
+    start: pd.Timestamp
+    end: pd.Timestamp
+    freq: pd.Series
+    '''
+    
+    start = df.index.min()
+    end = df.index.max()
+    freq = df.index.to_series().diff().value_counts()
+    return start, end, freq
