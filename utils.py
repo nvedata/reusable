@@ -131,3 +131,15 @@ def timeseries_info(df):
     end = df.index.max()
     freq = df.index.to_series().diff().value_counts()
     return start, end, freq
+
+def bool_report(series):
+    '''Returns groups of indices for bool series provided from dataframe tests.
+    Parameters
+    ----------
+    series: pd.Series of bool
+    
+    Returns
+    ----------
+    report: dict
+    '''
+    return series.groupby(series).groups
