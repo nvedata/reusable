@@ -143,3 +143,20 @@ def bool_report(series):
     report: dict
     '''
     return series.groupby(series).groups
+
+def floating_filter(df, value):
+    '''Find single row of dataframe by value in any column.
+    df: pd.DataFrame
+    value: scalar'''
+    #TODO array instead value: single run with 3d approach
+    #TODO merge behavior: several matching rows
+    
+    val_mask=(df.values==value)
+    if (val_mask.sum(axis=0)>1).any():
+        raise ValueError('non-unique value %s in matching dataframe' % value)
+    if (val_mask.sum(axis=0)==0).all():
+        return pd.Series(name=value)
+        
+    series=df[val_mask.any(axis=1)].iloc[0].copy()
+    series.name=value
+    return series
