@@ -160,3 +160,20 @@ def floating_filter(df, value):
     series=df[val_mask.any(axis=1)].iloc[0].copy()
     series.name=value
     return series
+
+def columnwise_rolling(df, windows, aggfunc):
+    '''Rolling dataframe aggregation with individual window for each column.
+    Parameters
+    ----------
+    df : pd.DataFrame
+    windows: pd.Series of int
+    Rolling window periods for each column. 
+    aggfunc: str or callable
+    
+    Returns
+    -------
+    df : pd.DataFrame
+    '''
+    return df.apply(lambda x: x\
+                    .rolling(windows[x.name])\
+                    .agg(aggfunc))
