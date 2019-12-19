@@ -161,19 +161,37 @@ def floating_filter(df, value):
     series.name=value
     return series
 
-def columnwise_rolling(df, windows, aggfunc):
+def columnwise_rolling(df, windows, aggfunc, **kwargs):
     '''Rolling dataframe aggregation with individual window for each column.
     Parameters
     ----------
     df : pd.DataFrame
     windows: pd.Series of int
-    Rolling window periods for each column. 
+    Rolling window periods for each column.
     aggfunc: str or callable
+    **kwargs : rolling method kwargs
     
     Returns
     -------
     df : pd.DataFrame
     '''
     return df.apply(lambda x: x\
-                    .rolling(windows[x.name])\
+                    .rolling(windows[x.name], **kwargs)\
                     .agg(aggfunc))
+
+def columnwise_shift(df, offsets, freq):
+    '''Shift each column with individual offset.
+    Parameters
+    ----------
+    df : pd.DataFrame
+    offsets : pd.Series of int
+    Offsets for each column.
+    aggfunc : str or callable
+    **kwargs : shift kwargs
+    
+    Returns
+    -------
+    df : pd.DataFrame
+    '''
+    return df.apply(lambda x: x\
+                    .shift(-offsets[x.name], freq=freq))
