@@ -195,3 +195,30 @@ def columnwise_shift(df, offsets, freq):
     '''
     return df.apply(lambda x: x\
                     .shift(-offsets[x.name], freq=freq))
+
+def recursive_set(list_like):
+    '''Returns set of scalar elements of list-like.
+    Can be used as aggregation function.'''
+    
+    scalars = set()
+    for i in list_like:
+        #scalar check
+        if hasattr(i, '__setitem__'):
+            scalars = scalars.union(recursive_set(i))
+        else:
+            scalars.add(i)
+            
+    return scalars
+
+def recursive_flatten(list_like):
+    '''Returns list of scalar elements of list-like'''
+    
+    scalars=[]
+    for i in list_like:
+        #scalar check
+        if hasattr(i, '__setitem__'):
+            scalars += recursive_flatten(i)
+        else:
+            scalars.append(i)
+            
+    return scalars
