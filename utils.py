@@ -1,6 +1,8 @@
+import datetime
+import hashlib
+
 import numpy as np
 import pandas as pd
-import datetime
 
 def excel_date(date):
     '''
@@ -222,3 +224,19 @@ def recursive_flatten(list_like):
             scalars.append(i)
             
     return scalars
+
+
+def hash_df(df, hashfunc=hashlib.sha1):
+    '''Get hex hash of dataframe values.
+    
+    Parameters
+    ----------
+    df : pd.DataFrame
+    hashfunc : callable, default hashlib.sha1
+    Hash function from hashlib package.
+    
+    Returns
+    -------
+    hash: str
+    '''
+    return hashfunc(df.values.tobytes()).hexdigest()
