@@ -200,12 +200,13 @@ def columnwise_shift(df, offsets, freq):
 
 def recursive_set(list_like):
     '''Returns set of scalar elements of list-like.
+    Strings and types without __len__() method are considered as scalars.
     Can be used as aggregation function.'''
     
     scalars = set()
     for i in list_like:
         #scalar check
-        if hasattr(i, '__setitem__'):
+        if hasattr(i, '__len__') and not isinstance(i, str):
             scalars = scalars.union(recursive_set(i))
         else:
             scalars.add(i)
@@ -213,12 +214,13 @@ def recursive_set(list_like):
     return scalars
 
 def recursive_flatten(list_like):
-    '''Returns list of scalar elements of list-like'''
+    '''Returns list of scalar elements of list-like.
+    Strings and types without __len__() method are considered as scalars.'''
     
-    scalars=[]
+    scalars = []
     for i in list_like:
         #scalar check
-        if hasattr(i, '__setitem__'):
+        if hasattr(i, '__len__') and not isinstance(i, str):
             scalars += recursive_flatten(i)
         else:
             scalars.append(i)
