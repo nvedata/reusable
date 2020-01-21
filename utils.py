@@ -242,3 +242,23 @@ def hash_df(df, hashfunc=hashlib.sha1):
     hash: str
     '''
     return hashfunc(df.values.tobytes()).hexdigest()
+
+def regroup_dict(d):
+    '''Regroup dictionary when values are sets
+    by elements of these sets.
+    
+    Parameters
+    ----------
+    d : dict when values are sets.
+    
+    Returns
+    -------
+    re_d : dict when values are sets.
+    '''
+    
+    re_d = defaultdict(set)
+    for k, v in d.items():
+        for i in v:
+            re_d[i].add(k)
+    
+    return re_d
