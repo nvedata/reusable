@@ -263,3 +263,21 @@ def regroup_dict(d):
             re_d[i].add(k)
     
     return re_d
+
+def nondecr_subarray_len(arr):
+    '''Return length of non-decreasing subarrays of given array.
+    Parameters
+    ----------
+    arr : 1d np.ndarray
+    
+    Returns
+    -------
+    subarr_len : 1d np.ndarray'''
+    
+    with np.errstate(invalid='ignore'):
+        decr_mask = arr[:-1] > arr[1:]
+    idx = np.arange(1, arr.shape[0])
+    neg_diff_idx = idx[decr_mask]
+    subarr_len = np.diff(neg_diff_idx, prepend=0, append=arr.shape[0])
+    
+    return subarr_len
