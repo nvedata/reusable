@@ -281,3 +281,28 @@ def nondecr_subarray_len(arr):
     subarr_len = np.diff(neg_diff_idx, prepend=0, append=arr.shape[0])
     
     return subarr_len
+
+def value_subarray_len(arr, value):
+    '''Find length of consecutive subseries of value in array.
+    Parameters
+    ----------
+    arr : 1d array-like
+    value : hashable value
+    
+    Returns
+    -------
+    subarrays : dict
+    Keys are indices of first elements of consecutive series of value.
+    Values are length of consecutive series of value.
+    '''
+    subarrays=defaultdict(int)
+    prev_val = np.nan
+    for i, val in enumerate(arr):
+        if val == value:
+            if val != prev_val:
+                substart = i
+
+            subarrays[substart] += 1
+        prev_val = val
+            
+    return dict(subarrays)
