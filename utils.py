@@ -306,3 +306,22 @@ def value_subarray_len(arr, value):
         prev_val = val
             
     return dict(subarrays)
+
+def const_check(arr, ignore_nan=True):
+    '''Check if all values in array are equal.
+    
+    Parameters
+    ----------
+    arr : 1d np.ndarray
+    ignore_nan : bool
+    
+    Returns
+    -------
+    output : bool
+    '''
+
+    if ignore_nan:
+        na_mask = np.isnan(arr)
+        return (arr[~na_mask] == arr[~na_mask][0]).all()
+    else:
+        return (arr == arr[0]).all()
