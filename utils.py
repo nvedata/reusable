@@ -325,3 +325,17 @@ def const_check(arr, ignore_nan=True):
         return (arr[~na_mask] == arr[~na_mask][0]).all()
     else:
         return (arr == arr[0]).all()
+
+def make_output(flagged_outputs):
+    '''Return objects according it's flags.
+    
+    Parameters
+    ----------
+    flagged_outputs : list of tuples (object, bool)
+    
+    Returns
+    -------
+    output : list or None
+    '''
+    output = [out for out, flag in flagged_outputs if flag]
+    return output    
