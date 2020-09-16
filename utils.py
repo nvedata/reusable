@@ -164,6 +164,34 @@ def floating_filter(df, value):
     series.name=value
     return series
 
+def get_related_df(matching, values, related_columns):
+    '''Return list of values from related columns if any given
+    values contains in row of matching.
+    
+    Parameters
+    ----------
+    matching : pd.DataFrame
+    
+    values : 1d list-like
+    Values to search in rows of matching.
+    
+    related_columns : 1d list-like
+    Columns of matching.
+    
+    Returns
+    -------
+    related_df : pd.DataFrame
+    DataFrame with passed values as index.
+    '''
+
+    val_arr = np.array(values)
+    mask = flow_matching.values[:, :, np.newaxis] == val_arr
+    row_mask = mask.any(axis=1)
+    m_idx, val_idx = np.nonzero(row_mask)
+    related_df = matching[related_columns].iloc[m_idx]
+    related_df.index = val_arr[val_idx]
+    return  related_df
+
 def columnwise_rolling(df, windows, aggfunc, **kwargs):
     '''Rolling dataframe aggregation with individual window for each column.
     Parameters
