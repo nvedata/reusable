@@ -292,6 +292,27 @@ def regroup_dict(d):
     
     return re_d
 
+def subseries_count(a):
+    '''
+    Count subseries of True in array.
+    
+    Parameters
+    ----------
+    a : 1d np.ndarray, dtype=bool
+    
+    Returns
+    -------
+    subs_start_idx : 1d np.ndarray
+    Indices of subseries start.
+    
+    count : 1d np.ndarray
+    '''
+    marked_a = np.cumsum(~a)
+    labels, count = np.unique(marked_a, return_counts=True)
+    mask = count > 1
+    subs_start_idx = np.searchsorted(marked_a, labels[mask]) + 1
+    return subs_start_idx, count[mask] - 1
+
 def nondecr_subarray_len(arr):
     '''Return length of non-decreasing subarrays of given array.
     Parameters
