@@ -405,3 +405,25 @@ def inverse_agg_count(series):
     index.to_series().groupby(index).count() returns series.
     '''
     return np.repeat(series.index, series)
+
+def repeat_range(repeats, range_step=1):
+    '''
+    Repeat range.
+    
+    Parameters
+    ----------
+    repeats : 1d np.ndarray, dtype=int
+    Nonzero number of repetitions for each element in range.
+    
+    range_step : int
+    Step of sequence of integers from 0 to len(repeats).
+    
+    Returns
+    -------
+    res : 1d np.ndarray, dtype : int
+    '''
+    idx = repeats.cumsum()
+    res = np.zeros(idx[-1], dtype=int)
+    res[idx[:-1]] = range_step
+    res = res.cumsum()
+    return res
