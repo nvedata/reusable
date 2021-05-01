@@ -387,4 +387,21 @@ def make_output(flagged_outputs):
     output : list or None
     '''
     output = [out for out, flag in flagged_outputs if flag]
-    return output    
+    return output
+
+def inverse_agg_count(series):
+    '''
+    Inverse count agregation.
+    
+    Parameters
+    ----------
+    series : pd.Series with 1d index
+    Count aggregation result.
+    
+    Returns
+    -------
+    index : 1d index
+    Index values repeated series.values times.
+    index.to_series().groupby(index).count() returns series.
+    '''
+    return np.repeat(series.index, series)
