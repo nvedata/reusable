@@ -427,3 +427,17 @@ def repeat_range(repeats, range_step=1):
     res[idx[:-1]] = range_step
     res = res.cumsum()
     return res
+
+def equal_multiple(*arrays):
+    '''
+    Compare multuple arrays.
+    
+    Parameters
+    ----------
+    arrays : tuple of 1d np.ndarray
+    
+    Returns
+    -------
+    bool
+    '''
+    return np.all(np.vstack(arrays) == arrays[0])
