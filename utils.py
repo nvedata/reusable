@@ -430,7 +430,7 @@ def repeat_range(repeats, range_step=1):
 
 def equal_multiple(*arrays):
     '''
-    Compare multuple arrays.
+    Compare multiple arrays.
     
     Parameters
     ----------
@@ -441,3 +441,26 @@ def equal_multiple(*arrays):
     bool
     '''
     return np.all(np.vstack(arrays) == arrays[0])
+
+def safe_getitem(iterable, key, default):
+    '''
+    Get item from iterable by key or index.
+    Return default value when key or index is unavailable.
+    
+    Parameters
+    ----------
+    iterable : iterable
+    
+    key : hashable
+    Iterable index or key.
+    
+    default : object
+    
+    Returns
+    -------
+    object
+    '''
+    try:
+        return iterable[index]
+    except (IndexError, KeyError):
+        return default
