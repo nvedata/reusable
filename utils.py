@@ -461,6 +461,6 @@ def safe_getitem(iterable, key, default):
     object
     '''
     try:
-        return iterable[index]
+        return iterable[key]
     except (IndexError, KeyError):
         return default
