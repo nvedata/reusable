@@ -464,3 +464,19 @@ def safe_getitem(iterable, key, default):
         return iterable[key]
     except (IndexError, KeyError):
         return default
+
+def flatten_multiindex(index, sep='_'):
+    '''
+    Flatten multiindex with joined column names.
+    
+    Parameters
+    ----------
+    index : pd.MultiIndex
+    
+    sep : str
+    
+    Returns
+    -------
+    pd.Index
+    '''
+    return index.to_flat_index().str.join(sep)
